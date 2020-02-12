@@ -1,0 +1,39 @@
+配置 在克隆的项目下新建一个uwsgi文件(与nginx建立联系)touch xxx.xml
+   <uwsgi>   
+   <socket>127.0.0.1:8997</socket><!-- 内部端口，自定义 --> 
+   <chdir>/data/wwwroot/mysite/</chdir><!-- 项目路径 -->            
+   <module>mysite.wsgi</module> 
+   <processes>4</processes> <!-- 进程数 -->     
+   <daemonize>uwsgi.log</daemonize><!-- 日志文件 -->
+   </uwsgi>
+启动项目中的uwsgi(uwsgi -x xxx.xml)(可先杀死uwsgi)
+ 安装nginx和配置 
+ >
+
+ 安装 apt-get intall nginx 
+ 配置 cd /etc/nginx/   vi nginx.conf
+ events {
+    worker_connections  1024;
+}
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+    sendfile        on;
+    server {
+        listen       80;
+        server_name  www.django.cn;
+        charset utf-8;
+        location / {
+           include uwsgi_params;
+           uwsgi_pass 127.0.0.1:8997;
+           uwsgi_param UWSGI_SCRIPT mysite.wsgi;
+           uwsgi_param UWSGI_CHDIR /data/wwwroot/mysite/; #项目路径
+           
+        }
+        location /static/ {
+        alias /data/wwwroot/mysite/static/; #静态资源路径
+        }
+          }
+ }
+启动nginx nginx
+完结
