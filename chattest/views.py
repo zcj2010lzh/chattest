@@ -13,7 +13,7 @@ class chat(APIView):
     date=time.strftime(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
     sender=request._request.POST.get('sender')
     content=request._request.POST .get("content")
-    file.write('\n'+sender+" "+content+" "+date)
+    file.write(sender+" "+content+" "+date+'\n')
     file.close()
     return JsonResponse({'code':'1'})
  def get(self,request,*args,**kwargs):
